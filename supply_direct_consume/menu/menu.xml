@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="supply_material_request.material_in_transit_stock" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0 ,[
+            ref('supply_material_request.group_internal_material_request_user'),
+            ref('supply_direct_consume.group_material_direct_consume'),
+            ])]"/>
+        </record>
+
+        <record id="supply_material_request.material_supply_inventory_report_line_view" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0 ,[
+            ref('supply_material_request.group_internal_material_request_user'),
+            ref('supply_direct_consume.group_material_direct_consume'),
+            ])]"/>
+        </record>
+
+        <menuitem id="menu_supply_direct_consume" name="Supply Direct Consume"
+                  parent="supply_material_request.parent_menu_internal_material_request"
+                  action="supply_direct_consume.action_supply_direct_consume"
+                  groups="supply_direct_consume.group_material_direct_consume" sequence="12"/>
+    </data>
+</odoo>

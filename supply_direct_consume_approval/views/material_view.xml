@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="direct_consume_form_inherit_supply_approval" model="ir.ui.view">
+            <field name="name">internal.material.request</field>
+            <field name="model">internal.material.request</field>
+            <field name="inherit_id" ref="supply_direct_consume.view_supply_direct_consume_form"/>
+            <field name="arch" type="xml">
+                <field name="requested_by" position="after">
+                    <field name="assigned_to" attrs="{'readonly': [('is_editable','=', False)]}" required="True"
+                           options="{'no_create': True, 'no_open': True}"/>
+                </field>
+                <button name="button_draft" position="after">
+                    <button name="button_to_approve" string="Request approval" type="object" class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"
+                            groups="supply_direct_consume.group_material_direct_consume"/>
+
+                    <button name="button_approved" string="Approve" type="object"
+                            attrs="{'invisible': [('state', '!=', 'to_approve')]}"
+                            groups="supply_request_approval.group_internal_material_request_manager"
+                            class="oe_highlight"/>
+
+                    <button name="%(supply_request_approval.action_change_approver)d" string="Change Approver"
+                            type="action" class="oe_highlight"
+                            attrs="{'invisible': [('state', 'not in', ('to_approve'))]}"
+                            groups="supply_direct_consume.group_material_direct_consume"/>
+                </button>
+
+                <xpath expr="//button[@name='create_material_request']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="direct_consume_form_view_internal_transfer" model="ir.ui.view">
+            <field name="name">internal.material.request</field>
+            <field name="model">internal.material.request</field>
+            <field name="inherit_id" ref="supply_material_request.view_internal_material_request_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='dest_location_id']" position="after">
+                    <field name="is_direct_consume" invisible="1"/>
+                    <field name="direct_dest_location_id" string="Destination Location"
+                           attrs="{'required': [('is_direct_consume', '=', True)], 'readonly': [('is_editable','=', False)], 'invisible': [('is_direct_consume', '!=', True)]}"
+                           options="{'no_create': True, 'no_open': True}"/>
+                </xpath>
+
+                <xpath expr="//field[@name='dest_location_id']" position="attributes">
+                    <attribute name="required">0</attribute>
+                    <attribute name="attrs">{'required': [('is_direct_consume', '!=', True)], 'readonly':
+                        [('is_editable','=', False)], 'invisible': [('is_direct_consume', '=', True)]}
+                    </attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

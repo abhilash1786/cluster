@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="group_material_direct_consume" model="res.groups">
+            <field name="name">Material Direct Consume</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="category_id" ref="supply_material_request.module_category_material_request"/>
+        </record>
+
+        <!--===========================Supply Request IR Rule=====================================-->
+        <record model="ir.rule" id="supply_request_material_direct_consume_user_rule">
+            <field name="name">Supply Request Direct Consume</field>
+            <field name="model_id" ref="supply_material_request.model_internal_material_request"/>
+            <field name="global" eval="True"/>
+            <field name="groups" eval="[(4, ref('supply_direct_consume.group_material_direct_consume'))]"/>
+            <field name="domain_force">['|',('requested_by','=',False),('requested_by','=',user.id)]
+            </field>
+        </record>
+
+        <record model="ir.rule" id="supply_request_material_line_direct_consume_user_rule">
+            <field name="name">Supply Request Line Direct Consume</field>
+            <field name="model_id" ref="supply_material_request.model_internal_material_request_line"/>
+            <field name="global" eval="True"/>
+            <field name="groups" eval="[(4, ref('supply_direct_consume.group_material_direct_consume'))]"/>
+            <field name="domain_force">['|',('create_uid','=',False),('create_uid','=',user.id)]
+            </field>
+        </record>
+
+    </data>
+</odoo>

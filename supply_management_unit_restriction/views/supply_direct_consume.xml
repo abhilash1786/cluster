@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="supply_direct_consume_form_view" model="ir.ui.view">
+        <field name="name">Supply Direct Consume</field>
+        <field name="model">internal.material.request</field>
+        <field name="inherit_id" ref="supply_direct_consume.view_supply_direct_consume_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='line_ids']//tree//field[@name='product_uom_id']" position="after">
+                <field name="all_uom_ids" widget="many2many_tags" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']//tree/field[@name='product_uom_id']" position="attributes">
+                <attribute name="domain">[('id', '=', all_uom_ids)]</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

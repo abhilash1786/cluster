@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="material_issue_form_inherit_direct_consume" model="ir.ui.view">
+            <field name="name">supply.material.issue</field>
+            <field name="model">supply.material.issue</field>
+            <field name="inherit_id" ref="supply_material_request.supply_request_issue_form_view"/>
+            <field name="arch" type="xml">
+                <field name="issued_by" position="after">
+                    <field name="is_direct_consume" readonly="1" invisible="1"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

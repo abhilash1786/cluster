@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="view_supply_direct_consume_form">
+            <field name="name">internal.material.request.form</field>
+            <field name="model">internal.material.request</field>
+            <field name="arch" type="xml">
+                <form string="Internal Material Request">
+                    <header>
+                        <button name="button_draft" states="rejected" string="Reset" type="object"
+                                attrs="{'invisible': [('state', '!=', 'rejected')]}"
+                                invisible="context.get('inv_bool',False)"
+                                groups="supply_direct_consume.group_material_direct_consume"/>
+
+                        <button name="create_material_request" attrs="{'invisible': [('show_button','=', False)]}"
+                                string="Request Material" type="object" class="oe_highlight"
+                                invisible="context.get('inv_bool',False)"
+                                groups="supply_direct_consume.group_material_direct_consume"/>
+
+                        <button name="button_rejected" states="to_approve,approved" string="Reject" type="object"
+                                confirm="Are you sure you want to reject?" invisible="context.get('inv_bool',False)"/>
+
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,to_approve,approved,requested,received,rejected"
+                               statusbar_colors='{"approved":"blue"}'
+                               attrs="{'invisible': [('approval_show','!=', False)]}"/>
+
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,requested,received,rejected"
+                               statusbar_colors='{"approved":"blue"}'
+                               attrs="{'invisible': [('approval_show','=', False)]}"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Received" bg_color="bg-success"
+                                attrs="{'invisible': [('received_state', '=', False)]}"/>
+                        <widget name="web_ribbon" title="Partially Received" bg_color="bg-success"
+                                attrs="{'invisible': [('partial_received_state', '=', False)]}"/>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="approval_show" invisible="1"/>
+                            <field name="show_button" invisible="1"/>
+                            <field name="received_state" invisible="1"/>
+                            <field name="partial_received_state" invisible="1"/>
+                            <field name="is_direct_consume" invisible="1"/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="requested_by"
+                                       readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group>
+                                <field name="description" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="company_id" groups="base.group_multi_company" widget="selection"
+                                       attrs="{'readonly': [('is_editable','=', False)]}" invisible="1"/>
+                                <field name="date_start"
+                                       readonly="True"/>
+                                <field name="is_editable" invisible="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="source_location_id" required="1" string="Source Location"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                <field name="direct_dest_location_id" required="1" string="Destination Location"
+                                       attrs="{'readonly': [('is_editable','=', False)]}"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group>
+                                <field name="material_approval_date" readonly="1"
+                                       attrs="{'invisible': [('material_approval_date', '=', False)]}"/>
+                                <field name="material_request_date" readonly="1"/>
+                                <field name="validate_date" invisible="1" readonly="1"/>
+                                <field name="supply_line_product_ids" widget="many2many_tags" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Products">
+                                <button name="action_receive_qty" string="Receive Qty" type="object"
+                                        class="oe_highlight"
+                                        confirm="Are you sure you want to receive?"
+                                        attrs="{'invisible': [('state', 'not in', ['requested', 'partial_receive'])]}"/>
+                                <button name="action_receive_all_qty" string="Receive All Qty" type="object"
+                                        class="oe_highlight" confirm="Are you sure you want to receive all quantity ?"
+                                        attrs="{'invisible': [('state', 'not in', ['requested', 'partial_receive'])]}"/>
+                                <field name="line_ids" decoration-danger="partial_received_state==False"
+                                       context="{'default_source_location_id': source_location_id}">
+                                    <tree editable="bottom">
+                                        <field name="product_id" required="True"
+                                               domain="[('id', 'not in', parent.supply_line_product_ids),('type', '=', 'product'), ('qty_available', '&gt;', 0.0), '|', ('company_id', '=', company_id), ('company_id', '=', False)]"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               attrs="{'readonly': [('is_editable','=', False)]}"
+                                               context="{'location': parent.source_location_id}"/>
+                                        <field name="name" required="True"
+                                               attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                        <field name="onhand_qty" readonly="1"/>
+                                        <field name="source_location_id" force_save="1" invisible="1"/>
+                                        <field name="product_qty" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                        <field name="product_uom_category_id" invisible="1"/>
+                                        <field name="product_uom_id"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               domain="[('category_id', '=', product_uom_category_id)]"
+                                               attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                        <field name="is_editable" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="total_received_qty" readonly="1"/>
+                                        <field name="total_transfer_qty" string="Total Issued Qty" readonly="1"/>
+                                        <field name="transfer_qty" string="Issued Not Received" readonly="1"/>
+                                        <field name="received_qty" string="Input Receive"
+                                               attrs="{'readonly': [('parent.state', 'not in', ('requested', 'partial_receive'))]}"
+                                               force_save="1"/>
+                                        <field name="company_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Material Requested" name="issue_line"
+                                  attrs="{'invisible': [('supply_issue_ids', '=', False)]}">
+                                <field name="supply_issue_ids" readonly="1"/>
+                            </page>
+                            <page string="Moves" name="supply_move"
+                                  attrs="{'invisible': [('supply_req_move_ids', '=', False)]}">
+                                <field name="supply_req_move_ids" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <!-- Chatter -->
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_supply_direct_consume">
+            <field name="name">Supply Direct Consume</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">internal.material.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="supply_material_request.material_request_search_view"/>
+            <field name="context">{'default_is_direct_consume': True}</field>
+            <field name="domain">[('is_direct_consume', '=', True)]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('supply_material_request.view_internal_material_request_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_supply_direct_consume_form')})]"/>
+        </record>
+
+        <!--    ======================inherit action==============================-->
+        <record id="supply_material_request.internal_material_request_form_action" model="ir.actions.act_window">
+            <field name="domain">[('is_direct_consume', '=', False), ('is_internal_transfer', '=', False)]</field>
+        </record>
+
+    </data>
+</odoo>
