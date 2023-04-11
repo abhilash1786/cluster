@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Inherit Form View to Modify it -->
+    <record id="location_form_inherit_maitenance_consume" model="ir.ui.view">
+        <field name="name">Location</field>
+        <field name="model">stock.location</field>
+        <field name="inherit_id" ref="stock.view_location_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='usage']" position="before">
+                <!-- Add your fields or attributes here -->
+                <field name="maintenance_consume"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!--  Stock Daily Movement Wizard  -->
+    <record id="view_stock_daily_movement_wiz" model="ir.ui.view">
+        <field name="name">Stock Daily Movement Wiz</field>
+        <field name="model">stock.movement.wiz</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="from_date"/>
+                    </group>
+                    <group>
+                        <field name="to_date"/>
+                    </group>
+                </group>
+                <group>
+                    <group >
+                        <field name="product_ids" widget="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field name="location_ids" widget="many2many_tags" domain="[('company_id', '=', company_id), ('usage', '=', 'internal')]"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="company_id"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_get_data" class="oe_highlight" type="object" string="Get Report"/>
+                    or
+                    <button special="cancel" string="Cancel" class="oe_highlight"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <!--  Action Stock Daily Movement Wizard  -->
+    <record id="action_stock_movement_wiz" model="ir.actions.act_window">
+        <field name="name">Stock Daily Movement</field>
+        <field name="res_model">stock.movement.wiz</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <!--  Menu Stock Daily Movement Wizard  -->
+    <menuitem id="menu_stock_daily_movement_wiz"
+              name="Stock Daily Movement"
+              action="action_stock_movement_wiz"
+              parent="stock.menu_warehouse_report"
+              sequence="0"
+              />
+</odoo>

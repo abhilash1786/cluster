@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Inherit Form View to Modify it -->
+    <record id="inherit_maintenance_supply_consume" model="ir.ui.view">
+        <field name="name">Maintenance</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance_stages.inherit_maintenance_request_form"/>
+        <field name="arch" type="xml">
+<!--            <button name="action_confirm" position="after">-->
+<!--                <button name="create_maintenance_supply_consumption" string="Supply Request"-->
+<!--                        confirm="Are You Sure To Confirm?"-->
+<!--                        type="object"/>-->
+<!--            </button>-->
+            <button name="action_open_expense" position="after">
+                <button type="object" name="action_open_consume" string="Supply" class="oe_stat_button" icon="fa-truck">
+                     <field name="consume_id" invisible="1" widget="statinfo" string="Consume"/>
+                </button>
+            </button>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Consume Product" name="consume_product"
+                      attrs="{'invisible':['|', ('maintenance_by', '!=', 'internal'),
+                       ('state', 'not in', ('in_progress', 'repaired'))]}">
+                    <group>
+                        <field name="consume_src_location_id"
+                               domain="[('id', 'in', allowed_location_ids)]"
+                               attrs="{'readonly': [('state', '=', 'repaired')]}"
+                               options="{'no_create': True,'no_open': True}"/>
+                        <field name="consume_dest_location_id" attrs="{'readonly': [('state', '=', 'repaired')]}" options="{'no_create': True,'no_open': True}"/>
+                        <field name="consume_line_product_ids" invisible="1"/>
+                        <field name="get_current_user_id" invisible="1"/>
+                        <field name="allowed_location_ids" invisible="1"/>
+                    </group>
+                    <field name="consume_product_ids" attrs="{'readonly': [('state', '=', 'repaired')]}"
+                           context="{'default_source_location_id': consume_src_location_id}">
+                        <tree editable="bottom">
+                            <field name="product_id" required="1" context="{'location': parent.consume_src_location_id}"
+                                   domain="[('id', 'not in', parent.consume_line_product_ids), ('type', '=', 'product'), ('qty_available', '&gt;', 0.0), '|', ('company_id', '=', company_id), ('company_id', '=', False)]"/>
+                            <field name="product_uom_id" required="1"/>
+                            <field name="onhand_qty" required="1"/>
+                            <field name="product_qty" required="1"/>
+                            <field name="qty_damage" required="1"/>
+                            <field name="company_id" invisible="1"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

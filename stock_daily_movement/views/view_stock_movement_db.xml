@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--  Tree view  -->
+    <record id="view_stock_movemet_db_view_tree" model="ir.ui.view">
+        <field name="name">Stock Daily Movement Db View</field>
+        <field name="model">stock.daily.movement.db.view</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="product_id"/>
+                <field name="reference"/>
+                <field name="date"/>
+                <field name="from_location_id"/>
+                <field name="to_location_id"/>
+                <field name="opening"/>
+                <field name="purchase"/>
+                <field name="sale"/>
+                <field name="sale_return"/>
+                <field name="internal_transfer"/>
+                <field name="adjustment"/>
+                <field name="value"/>
+                <field name="on_hand"/>
+                <field name="avg_cost"/>
+            </tree>
+        </field>
+    </record>
+    <!--  Action  -->
+    <record id="action_stock_movement_db_view" model="ir.actions.act_window">
+        <field name="name">Stock Daily Movement</field>
+        <field name="res_model">stock.daily.movement.db.view</field>
+        <field name="view_mode">tree</field>
+        <field name="target">current</field>
+    </record>
+</odoo>

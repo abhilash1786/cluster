@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!--  Tree View  -->
+    <record id="view_multi_product_scrap_tree" model="ir.ui.view">
+        <field name="name">Multi Product Scrap Tree View</field>
+        <field name="model">res.product.scrap</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="reference_no"/>
+                <field name="source_location_id"/>
+                <field name="scrap_location_id"/>
+                <field name="confirm_date"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'"/>
+            </tree>
+        </field>
+    </record>
+    <!-- Form View  -->
+    <record id="view_multi_product_scrap_form" model="ir.ui.view">
+        <field name="name">Multi Product Scrap Form View</field>
+        <field name="model">res.product.scrap</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button type="object" name="action_validate"  string="Validate" class="oe_highlight"
+                            attrs="{'invisible': [('state', 'in', ('done'))]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="reference_no" nolabel="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="source_location_id" required="1" domain="[('usage', '=', 'internal'), ('company_id', '=', company_id)]"
+                                    options="{'no_create': True, 'no_open': True}" attrs="{'readonly': [('state', '=', 'done')]}"/>
+                            <field name="source_document" required="1" attrs="{'readonly': [('state', '=', 'done')]}"/>
+                            <field name="confirm_date" attrs="{'readonly': [('state', '=', 'done')], 'invisible':[('state', '=', 'draft')]}"/>
+                        </group>
+                        <group>
+                            <field name="scrap_location_id" required="1" domain="[('usage', '=', 'inventory'), ('scrap_location', '=', True) ,('company_id', '=', company_id)]"
+                                    options="{'no_create': True, 'no_open': True}" attrs="{'readonly': [('state', '=', 'done')]}"/>
+                            <field name="company_id" options="{'no_create': True}"
+                                   readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Product Information">
+                            <field name="multi_scrap_ids" context="{'default_location_id': source_location_id}"
+                                   attrs="{'readonly': [('state', '=', 'done')]}">
+                                <tree editable="bottom" decoration-danger="onhand_qty &lt; 0.0">
+                                    <field name="product_id"
+                                           context="{'default_detailed_type':'product'}"
+                                           domain="[('type', 'in', ['product', 'consu'])]" required="1"/>
+                                    <field name="location_id" invisible="0" readonly="1" force_save="1"/>
+                                    <field name="lot_id" options="{'no_create': True}"/>
+                                    <field name="onhand_qty" readonly="1" force_save="1"/>
+                                    <field name="scrap_qty" required="1"/>
+                                    <field name="state" invisible="1"/>
+                                    <field name="product_uom_category_id" invisible="1"/>
+                                    <field name="name" invisible="1"/>
+                                    <field name="product_uom_id" invisible="1"/>
+                                    <field name="lot_id" invisible="1"/>
+                                    <field name="package_id" invisible="1"/>
+                                    <field name="owner_id" invisible="1"/>
+                                    <field name="move_id" invisible="1"/>
+                                    <field name="picking_id" invisible="1"/>
+                                    <field name="date_done" invisible="1"/>
+                                    <field name="company_id" invisible="1"/>
+                                    <field name="scrap_location_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <!--  Inherit stock Scrap View  -->
+    <record id="view_inherited_stock_scrap_view" model="ir.ui.view">
+        <field name="name">Inherited Stock Scrap Form View</field>
+        <field name="model">stock.scrap</field>
+        <field name="inherit_id" ref="stock.stock_scrap_form_view"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="multi_product_scrap_id" invisible="1"/>
+            </field>
+        </field>
+    </record>
+    <!--  Action  -->
+    <record id="action_multi_product_scrap" model="ir.actions.act_window">
+        <field name="name">Multi Product Scrap</field>
+        <field name="res_model">res.product.scrap</field>
+        <field name="view_mode">tree,form</field>
+        <field name="target">current</field>
+    </record>
+    <!-- Menu -->
+    <menuitem id="menu_multi_product_scrap"
+              name="Multi Product Scrap"
+              action="multi_product_scrap.action_multi_product_scrap"
+              parent="stock.menu_stock_warehouse_mgmt"
+              sequence="19"/>
+</odoo>

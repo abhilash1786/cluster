@@ -1,0 +1,2 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+access_multi_product_scrap,access_multi_product_scrap,model_res_product_scrap,,1,1,1,1

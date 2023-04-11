@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_form_product_template_form_stockonhand_readonly" model="ir.ui.view">
+        <field name="name">product.template.form.inherit.stockonhand.readonly</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="stock.product_template_form_view_procurement_button" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_update_quantity_on_hand']" position="attributes">
+               <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_open_quants']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button"
+                   name="action_open_quants_non_editable"
+                   icon="fa-cubes"
+                   type="object"
+                   >
+                   <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="qty_available" widget="statinfo" nolabel="1" class="mr4"/>
+                            <field name="uom_name"/>
+                        </span>
+                        <span class="o_stat_text">On Hand</span>
+                   </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_form_product_template_readonly_onhand" model="ir.ui.view">
+        <field name="name">product.template.form.inherit.readonly.onhand</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="stock.product_form_view_procurement_button" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_update_quantity_on_hand']" position="attributes">
+               <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_open_quants']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button"
+                       name="action_open_quants_non_editable"
+                       icon="fa-cubes"
+                       type="object"
+                       >
+                       <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="qty_available" widget="statinfo" nolabel="1" class="mr4"/>
+                                <field name="uom_name"/>
+                            </span>
+                            <span class="o_stat_text">On Hand</span>
+                       </div>
+                </button>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
