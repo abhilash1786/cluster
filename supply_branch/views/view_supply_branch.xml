@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--  Supply Consume Material Inherited Form View  -->
+    <record id="view_inherited_supply_consume_material_form" model="ir.ui.view">
+        <field name="name">supply.material.consume</field>
+        <field name="model">supply.material.consume</field>
+        <field name="inherit_id" ref="supply_consume_management.view_supply_consume_form"/>
+        <field name="arch" type="xml">
+            <field name="consume_location_id" position="after">
+                <field name="branch_id"
+                       options="{'no_create_edit': True, 'no_create':True}"
+                       required="True"
+                       attrs="{'readonly': [('state', '=', 'confirm')]}"/>
+            </field>
+        </field>
+    </record>
+</odoo>

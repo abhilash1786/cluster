@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="action_supply_material_request_report" model="ir.actions.report">
+            <field name="name">Print</field>
+            <field name="model">internal.material.request</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">supply_material_request.supply_material_request_report</field>
+            <field name="report_file">supply_material_request.supply_material_request_report</field>
+            <field name="binding_model_id" ref="model_internal_material_request"/>
+            <field name="binding_type">report</field>
+        </record>
+
+    </data>
+</odoo>

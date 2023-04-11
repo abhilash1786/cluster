@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_stock_detail_report_tree" model="ir.ui.view">
+        <field name="name">Stock Detailed Report View</field>
+        <field name="model">stock.detail.report.db.view</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="product_id"/>
+                <field name="reference"/>
+                <field name="src_location_id"/>
+                <field name="dest_location_id"/>
+                <field name="opening"/>
+                <field name="purchase"/>
+                <field name="purchase_return"/>
+                <field name="sale"/>
+                <field name="sale_return"/>
+                <field name="internal"/>
+                <field name="adjustment"/>
+                <field name="scrap"/>
+                <field name="closing"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_stock_detail_report" model="ir.actions.act_window">
+        <field name="name">Stock Detailed View Report</field>
+        <field name="res_model">stock.detail.report.db.view</field>
+        <field name="view_mode">tree</field>
+        <field name="target">current</field>
+    </record>
+</odoo>

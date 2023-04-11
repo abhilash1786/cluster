@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="material_transfer_stock_move_action" model="ir.actions.act_window">
+            <field name="name">Material In Transit</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.move</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'edit': False, 'create': False, 'delete': False}</field>
+            <field name="domain">[('int_material_request_line_id', '!=', False),('supply_issue_line_id', '!=', False), ('state', '=', 'assigned')]</field>
+        </record>
+
+        <record id="material_transfer_stock_move_action_issued_user" model="ir.actions.act_window">
+            <field name="name">Material In Transit</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.move</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'edit': False, 'create': False, 'delete': False, 'search_default_ready': 1}</field>
+            <field name="domain">[('int_material_request_line_id', '!=', False), ('supply_issue_line_id', '!=', False),('create_uid', '=', uid)]</field>
+        </record>
+
+        <record id="material_transfer_stock_move_action_maine_user_user" model="ir.actions.act_window">
+            <field name="name">Material In Transit</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.move</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'edit': False, 'create': False, 'delete': False, 'search_default_ready': 1}</field>
+            <field name="domain">[('int_material_request_line_id', '!=', False), ('supply_issue_line_id', '!=', False),('supply_req_id.requested_by', '=', uid)]</field>
+        </record>
+
+    </data>
+</odoo>

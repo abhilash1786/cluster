@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="menu_supply_material_consume_act" sequence="10"
+                  parent="supply_material_request.parent_menu_internal_material_request"
+                  action="supply_consume_management.supply_consume_form_action"
+                  groups="supply_material_request.group_internal_material_request_user"/>
+
+        <menuitem id="menu_supply_consume_report" sequence="14" name="Supply Consume Report"
+                  parent="supply_material_request.parent_menu_internal_material_request"
+                  action="supply_consume_management.action_supply_consume_line_list"
+                  groups="supply_material_request.group_internal_material_request_user"/>
+
+    </data>
+</odoo>

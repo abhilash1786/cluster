@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="supply_record_return_issuance_inherit" model="ir.ui.view">
+            <field name="name">Supply Issuance</field>
+            <field name="model">supply.material.issue</field>
+            <field name="inherit_id" ref="supply_material_request.supply_request_issue_form_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//header" position="inside">
+                    <field name="return_request" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//button[@name='material_issue']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('state', 'not in', ['partial_issue', 'draft']), ('return_request', '=', True)]}</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='material_issue']" position="after">
+                    <button name="action_receive_all_qty" string="Receive Return" type="object"
+                            attrs="{'invisible': ['|', ('state', 'not in', ['partial_issue', 'draft']), ('return_request', '!=', True)]}"
+                            class="oe_highlight"/>
+                </xpath>
+
+                <xpath expr="//field[@name='material_issue_line']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('return_request', '=', True)]}</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="supply_material_request.action_partial_full_supply_material_issue" model="ir.actions.act_window">
+            <field name="name">Material Issue</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">supply.material.issue</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', 'in', ('issued', 'return_received', 'cancel'))]</field>
+            <field name="context">{'create': False}</field>
+        </record>
+
+
+        <record id="supply_material_request.action_pending_supply_material_issue" model="ir.actions.act_window">
+            <field name="name">Pending Material Issue</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">supply.material.issue</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', 'in', ('draft', 'partial_issue')), ('return_request', '!=', True)]</field>
+            <field name="context">{'create': False}</field>
+        </record>
+
+        <record id="action_pending_supply_material_issue_return" model="ir.actions.act_window">
+            <field name="name">Pending Material Receiving</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">supply.material.issue</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', 'in', ('draft', 'partial_issue')), ('return_request', '=', True)]</field>
+            <field name="context">{'create': False}</field>
+        </record>
+
+    </data>
+</odoo>

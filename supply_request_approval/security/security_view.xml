@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="group_internal_material_request_manager" model="res.groups">
+            <field name="name">Supply Request Approver</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="category_id" ref="supply_material_request.module_category_material_request"/>
+        </record>
+
+        <record model="ir.rule" id="supply_request_material_approval_rule">
+            <field name="name">Supply Request Approval</field>
+            <field name="model_id" ref="supply_request_approval.model_internal_material_request"/>
+            <field name="global" eval="True"/>
+            <field name="groups" eval="[(4, ref('group_internal_material_request_manager'))]"/>
+            <field name="domain_force">[('assigned_to','=',user.id)]</field>
+        </record>
+
+        <record model="ir.rule" id="supply_request_material_line_approval_rule">
+            <field name="name">Supply Request Approval Line</field>
+            <field name="model_id" ref="supply_request_approval.model_internal_material_request_line"/>
+            <field name="global" eval="True"/>
+            <field name="groups" eval="[(4, ref('group_internal_material_request_manager'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+        </record>
+
+    </data>
+</odoo>

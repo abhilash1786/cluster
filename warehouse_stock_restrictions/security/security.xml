@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="warehouse_restriction_group" model="res.groups">
+            <field name="name">Inventory Location Restriction</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+<!--        =================warehouse rule=======================-->
+
+        <record id="warehouse_restriction_rule" model="ir.rule">
+            <field name="name">Allowed WH</field>
+            <field ref="stock.model_stock_picking_type" name="model_id"/>
+            <field name="groups" eval="[(4, ref('warehouse_stock_restrictions.warehouse_restriction_group'))]"/>
+            <field name="domain_force">[('warehouse_id', 'in', [ wh.id for wh in user.warehouse_ids])]</field>
+        </record>
+
+<!--        ========================================================-->
+        <record id="filter_user_location_type_allow_user" model="ir.rule">
+            <field name="name">User Allow Location</field>
+            <field name="model_id" search="[('model','=','stock.location')]" model="ir.model"/>
+            <field name="groups" eval="[(4, ref('warehouse_restriction_group'))]"/>
+            <field name="domain_force">[
+                '|', ('id','in', [ loc.id for loc in user.usr_stock_location_ids]),
+                ('usage', '!=', 'internal')
+                ]
+            </field>
+        </record>
+
+        <record id="filter_user_stock_quant_type_allow_user" model="ir.rule">
+            <field name="name">Stock Quants Access</field>
+            <field name="model_id" search="[('model', '=', 'stock.quant')]" model="ir.model"/>
+            <field name="groups" eval="[(4, ref('warehouse_restriction_group'))]"/>
+            <field name="domain_force">[
+                '|', ('location_id','in', user.usr_stock_location_ids.ids),
+                ('location_id.usage', '!=', 'internal')
+                ]
+            </field>
+        </record>
+
+        <record id="filter_user_stock_picking_allow_location" model="ir.rule">
+            <field name="name">Stock Picking Allow Location</field>
+            <field name="model_id" search="[('model', '=', 'stock.picking')]" model="ir.model"/>
+            <field name="groups" eval="[(4, ref('warehouse_restriction_group'))]"/>
+            <field name="domain_force">[
+                '|', ('location_id','in', user.usr_stock_location_ids.ids),
+                ('location_dest_id', 'in', user.usr_stock_location_ids.ids)
+                ]
+            </field>
+        </record>
+
+        <record id="filter_user_stock_move_allow_location" model="ir.rule">
+            <field name="name">Stock Move Allow Location</field>
+            <field name="model_id" search="[('model', '=', 'stock.move')]" model="ir.model"/>
+            <field name="groups" eval="[(4, ref('warehouse_restriction_group'))]"/>
+            <field name="domain_force">[
+                '|', ('location_id','in', user.usr_stock_location_ids.ids),
+                '|', ('location_dest_id', 'in', user.usr_stock_location_ids.ids),
+                   '|',  ('location_id.usage', '!=', 'internal'),
+                    ('location_dest_id.usage', '!=', 'internal')
+                ]
+            </field>
+        </record>
+
+    </data>
+</odoo>

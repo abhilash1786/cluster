@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="supply_internal_transfer_user_approval" model="ir.ui.view">
+            <field name="name">internal.transfer.user.setting</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="supply_material_request.supply_internal_transfer_user_setting"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='int_trans_loc_ids']" position="after">
+                    <field name="supply_req_approve_user" widget="many2many_tags"
+                           options='{"no_open": True, "no_create": True}'/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

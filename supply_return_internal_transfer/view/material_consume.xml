@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="meterial_consumsion_management_form_id" model="ir.ui.view">
+            <field name="name">supply.material.consume</field>
+            <field name="model">supply.material.consume</field>
+            <field name="inherit_id" ref="supply_consume_management.view_supply_consume_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="return_supply_qty" string="Return Qty" type="object" class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'confirm')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='available_product_ids']" position="after">
+                    <field name="picking_id" readonly="1"/>
+                    <field name="reason_to_return" attrs="{'invisible': [('state', '!=', 'confirm')]}"/>
+                </xpath>
+                <xpath expr="//notebook/page[@name='supply_line']/field[@name='line_ids']/tree/field[@name='qty_damage']"
+                       position="after">
+                    <field name="qty_to_return" readonly="0"
+                           attrs="{'column_invisible': [('parent.state', '!=', 'confirm')]}"/>
+                    <field name="returned_qty" readonly="1"
+                           attrs="{'column_invisible': [('parent.state', '!=', 'confirm')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

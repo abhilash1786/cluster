@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_stock_location_project,stock.location,stock.model_stock_location,warehouse_stock_restrictions.warehouse_restriction_group,1,1,1,0

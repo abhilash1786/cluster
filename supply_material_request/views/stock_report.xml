@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Inherit Form View to Modify it -->
+    <record id="inherit_stock_report_supply" model="ir.ui.view">
+        <field name="name">stock.wiz</field>
+        <field name="model">stock.wiz</field>
+        <field name="inherit_id" ref="stock_xlsx_report.view_stock_report_wizard"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="supply_request" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="stock_movement_report_supply_req" model="ir.actions.act_window">
+        <field name="name">Stock Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">stock.wiz</field>
+        <field name="view_mode">tree,form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="stock_xlsx_report.view_stock_report_wizard"/>
+        <field name="context">{'default_supply_request': True}</field>
+    </record>
+
+</odoo>

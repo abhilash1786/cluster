@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_stock_report_wizard" model="ir.ui.view">
+        <field name="name">Stock Daily Report Wizard</field>
+        <field name="model">stock.wiz</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="from_date"/>
+                    </group>
+                    <group>
+                        <field name="to_date"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="warehouse_ids" widget="many2many_tags"
+                               options="{'no_create': True, 'no_open': True}"
+                               domain="[('company_id', '=', company_id)]"/>
+                    </group>
+                    <group>
+                        <field name="location_ids" widget="many2many_tags"
+                               options="{'no_create': True, 'no_open': True}"
+                               domain="[('company_id', '=', company_id),('usage', '=', 'internal')]"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="product_ids" widget="many2many_tags"
+                               domain="[('detailed_type', '=', 'product')]"
+                               options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+                    <group>
+                        <field name="company_id"
+                               options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_report" string="Stock Report"
+                            type="object" class="oe_highlight"
+                    />
+                    or
+                    <button name="action_detail_report" string="Stock Detailed Report"
+                            type="object" class="oe_highlight"
+                    />
+                    or
+                    <button special="cancel" string="Cancel" type="object" class="oe_highlight"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stock_daily_wizard" model="ir.actions.act_window">
+        <field name="name">Stock Movement Report</field>
+        <field name="res_model">stock.wiz</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="stock_daily_report_menu"
+              name="Stock XLSX Report"
+              action="action_stock_daily_wizard"
+              parent="stock.menu_warehouse_report"
+              sequence="0"/>
+</odoo>

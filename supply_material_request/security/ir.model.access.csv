@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_internal_material_request,access.internal.material.request,model_internal_material_request,base.group_user,1,1,1,0
+access_internal_material_request_line,access.internal.material.request.line,model_internal_material_request_line,base.group_user,1,1,1,1
+access_supply_issue,supply.material.issue,model_supply_material_issue,base.group_user,1,1,1,0
+access_supply_issue_line,material.issue.line,model_material_issue_line,base.group_user,1,1,1,0
+access_sv_supply,stock.move,stock.model_stock_move,supply_material_request.group_internal_material_request_user,1,1,1,0
+access_picking_supply_consume,stock.picking,stock.model_stock_picking,supply_material_request.group_internal_material_request_user,1,1,1,0
+access_sv_quant,stock.quant,stock.model_stock_quant,supply_material_request.group_internal_material_request_user,1,1,1,0
+
+access_stock_move_material_request_issuer,stock.move,stock.model_stock_move,supply_material_request.group_internal_material_request_issue,1,1,1,0

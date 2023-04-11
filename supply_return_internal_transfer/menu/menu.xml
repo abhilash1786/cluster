@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="draft_menu_supply_material_issue_return" name="New Request Return"
+                  parent="supply_material_request.parent_menu_internal_material_request"
+                  action="supply_return_internal_transfer.action_pending_supply_material_issue_return" sequence="32"
+                  groups="supply_material_request.group_internal_material_request_issue"/>
+
+    </data>
+</odoo>

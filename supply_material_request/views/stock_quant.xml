@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="material_transit_stock_quant" model="ir.ui.view">
+            <field name="name">Quant</field>
+            <field name="model">stock.quant</field>
+            <field name="arch" type="xml">
+                <tree string="">
+                    <field name="location_id"/>
+                    <field name="product_id"/>
+                    <field name="lot_id"/>
+                    <field name="quantity"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="material_transfer_stock_quant_actions" model="ir.actions.server">
+            <field name="name">Inventory Report</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="stock.model_stock_quant"/>
+            <field name="state">code</field>
+            <field name="code">action = model.get_supply_quant_report()</field>
+        </record>
+
+    </data>
+</odoo>

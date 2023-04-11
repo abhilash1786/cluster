@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_wz_pr_supply,supply.line.pr.wz,model_supply_line_pr_wz,base.group_user,1,1,1,0
+access_wz_pr_line,product_pr_wz_line,model_product_pr_wz_line,base.group_user,1,1,1,0

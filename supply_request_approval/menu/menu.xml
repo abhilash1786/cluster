@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="material_supply_to_approve" sequence="8" name="To Approve"
+                  parent="supply_material_request.parent_menu_internal_material_request"
+                  action="supply_request_approval.action_supply_request_material_to_approve"
+                  groups="supply_request_approval.group_internal_material_request_manager"/>
+
+        <menuitem id="material_supply_all_approve" sequence="9" name="All Approved"
+                  parent="supply_material_request.parent_menu_internal_material_request"
+                  action="supply_request_approval.action_supply_request_material_all_approved"
+                  groups="supply_request_approval.group_internal_material_request_manager"/>
+
+    </data>
+</odoo>

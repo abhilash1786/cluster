@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="material_issue_tree_view" model="ir.ui.view">
+            <field name="name">Material Issue</field>
+            <field name="model">supply.material.issue</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="source_location_id"/>
+                    <field name="dest_location_id"/>
+                    <field name="date"/>
+                    <field name="request_by"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="supply_request_issue_form_view" model="ir.ui.view">
+            <field name="name">supply.material.issue</field>
+            <field name="model">supply.material.issue</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="material_issue" string="Material Issue" type="object"
+                                attrs="{'invisible': [('state', 'not in', ['partial_issue', 'draft'])]}"
+                                groups="supply_material_request.group_internal_material_request_issue"
+                                class="oe_highlight"/>
+                        <button name="cancel_supply_issue_request" string="Cancel" type="object" states="draft"
+                                groups="supply_material_request.group_internal_material_request_issue"
+                                class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="4">
+                            <field name="name" readonly="1"/>
+                            <field name="supply_req_id" readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="source_location_id" readonly="1"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                            <field name="dest_location_id" readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="date" readonly="1"/>
+                            <field name="request_by" readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="issued_by" readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                        <notebook>
+                            <page string="Request Material" name="req">
+                                <field name="material_issue_line" nolabel="1">
+                                    <tree editable="bottom" create="false" delete="false">
+                                        <field name="product_id" readonly="1"/>
+                                        <field name="uom_id" readonly="1"/>
+                                        <field name="onhand_qty" readonly="1"/>
+                                        <field name="qty_approved" readonly="1"/>
+                                        <field name="issue_qty"/>
+                                        <field name="total_issue_qty" readonly="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Moves" name="supply_move"
+                                  attrs="{'invisible': [('supply_issue_move_ids', '=', False)]}">
+                                <field name="supply_issue_move_ids" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_supply_material_issue" model="ir.actions.act_window">
+            <field name="name">Supply Issue</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">supply.material.issue</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'create': False}</field>
+        </record>
+
+        <record id="action_pending_supply_material_issue" model="ir.actions.act_window">
+            <field name="name">Pending Material Issue</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">supply.material.issue</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', 'in', ('draft', 'partial_issue'))]</field>
+            <field name="context">{'create': False}</field>
+        </record>
+
+        <record id="action_partial_full_supply_material_issue" model="ir.actions.act_window">
+            <field name="name">Material Issue</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">supply.material.issue</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', 'in', ('issued', 'cancel'))]</field>
+            <field name="context">{'create': False}</field>
+        </record>
+
+    </data>
+</odoo>

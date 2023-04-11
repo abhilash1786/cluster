@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="supply_request_line_pr_list" model="ir.ui.view">
+        <field name="name">Supply Request</field>
+        <field name="model">internal.material.request.line</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="request_id"/>
+                <field name="product_id"/>
+                <field name="product_uom_id"/>
+                <field name="requested_by"/>
+                <field name="product_qty"/>
+                <field name="company_id"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_supply_request_line_material_request">
+        <field name="name">Material Requests Lines</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">internal.material.request.line</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', 'in', ['requested'])]</field>
+        <field name="context">{'create': False, 'edit': False}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('supply_request_line_pr_list')})]"/>
+    </record>
+
+    <menuitem
+            id="menu_material_line_purchase_req"
+            sequence="10"
+            name="Material Purchase Request"
+            parent="supply_material_request.parent_menu_internal_material_request"
+            groups="sp_purchase_request.group_purchase_request_user"
+            action="action_supply_request_line_material_request"
+    />
+</odoo>

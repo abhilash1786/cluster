@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="internal_material_request_form_view" model="ir.ui.view">
+            <field name="name">Material Request</field>
+            <field name="model">internal.material.request</field>
+            <field name="inherit_id" ref="supply_material_request.view_internal_material_request_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="create_return_request_receive" type="object" string="Create Return"
+                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'received')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='material_request_date']" position="after">
+                    <field name="reason_to_return" attrs="{'invisible': [('state', '!=', 'received')]}"/>
+                </xpath>
+
+                <xpath expr="//page[@name='supply_move']" position="after">
+                    <page name="return_product_line" string="Return Item"
+                          attrs="{'invisible': [('state', '!=', 'received')]}">
+                        <field name="return_line_ids" attrs="{'readonly': [('state', '!=', 'received')]}">
+                            <tree create="false" delete="false" editable="bottom">
+                                <field name="product_id" required="True"
+                                       domain="[('type', '=', 'product'), '|', ('company_id', '=', company_id), ('company_id', '=', False)]"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                <field name="name" required="True"
+                                       attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                <field name="onhand_qty" readonly="1" force_save="1"/>
+                                <field name="product_qty" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                <field name="product_uom_id" force_save="1"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       domain="[('category_id', '=', product_uom_category_id)]"
+                                       attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                <field name="is_editable" invisible="1"/>
+                                <field name="state" invisible="1"/>
+                                <field name="total_received_qty" readonly="1"/>
+                                <field name="total_transfer_qty" string="Total Issued Qty" readonly="1" invisible="1"/>
+                                <field name="transfer_qty" string="Issued Not Received" readonly="1" invisible="1"/>
+                                <field name="received_qty" string="Input Receive"
+                                       attrs="{'readonly': [('parent.state', 'not in', ('requested', 'partial_receive'))]}"
+                                       force_save="1" invisible="1"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="product_uom_category_id" invisible="1"/>
+                                <field name="total_returned" readonly="1"/>
+                                <field name="qty_to_return" attrs="{'readonly': [('parent.state', '!=', 'received')]}"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <record id="internal_material_request_form_view_direct_consume" model="ir.ui.view">
+            <field name="name">Material Request</field>
+            <field name="model">internal.material.request</field>
+            <field name="inherit_id" ref="supply_direct_consume.view_supply_direct_consume_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="create_return_request_receive" type="object" string="Create Return"
+                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'received')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='material_request_date']" position="after">
+                    <field name="reason_to_return" attrs="{'invisible': [('state', '!=', 'received')]}"/>
+                </xpath>
+
+                <xpath expr="//page[@name='supply_move']" position="after">
+                    <page name="return_product_line" string="Return Item"
+                          attrs="{'invisible': [('state', '!=', 'received')]}">
+                        <field name="return_line_ids" attrs="{'readonly': [('state', '!=', 'received')]}">
+                            <tree create="false" delete="false" editable="bottom">
+                                <field name="product_id" required="True"
+                                       domain="[('type', '=', 'product'), '|', ('company_id', '=', company_id), ('company_id', '=', False)]"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                <field name="name" required="True"
+                                       attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                <field name="onhand_qty" readonly="1" force_save="1"/>
+                                <field name="product_qty" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                <field name="product_uom_id" force_save="1"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       domain="[('category_id', '=', product_uom_category_id)]"
+                                       attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                <field name="is_editable" invisible="1"/>
+                                <field name="state" invisible="1"/>
+                                <field name="total_received_qty" readonly="1"/>
+                                <field name="total_transfer_qty" string="Total Issued Qty" readonly="1" invisible="1"/>
+                                <field name="transfer_qty" string="Issued Not Received" readonly="1" invisible="1"/>
+                                <field name="received_qty" string="Input Receive"
+                                       attrs="{'readonly': [('parent.state', 'not in', ('requested', 'partial_receive'))]}"
+                                       force_save="1" invisible="1"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="product_uom_category_id" invisible="1"/>
+                                <field name="total_returned" readonly="1"/>
+                                <field name="qty_to_return" attrs="{'readonly': [('parent.state', '!=', 'received')]}"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="material_request_line_tree_view_inherit_return" model="ir.ui.view">
+            <field name="name">Material Request Line</field>
+            <field name="model">internal.material.request.line</field>
+            <field name="inherit_id" ref="supply_material_request.material_request_line_tree_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='total_received_qty']" position="after">
+                    <field name="total_returned" readonly="1" sum="Total"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

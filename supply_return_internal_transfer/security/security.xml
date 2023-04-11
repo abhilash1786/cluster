@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.rule" id="supply_material_request.supply_material_issue_location_rule">
+            <field name="name">Supply Issue Location</field>
+            <field name="model_id" ref="supply_material_request.model_supply_material_issue"/>
+            <field name="global" eval="True"/>
+            <field name="groups" eval="[(4, ref('supply_material_request.group_internal_material_request_issue'))]"/>
+            <field name="domain_force">['|', ('source_location_id','in',user.int_trans_loc_ids.ids), ('dest_location_id','in',user.int_trans_loc_ids.ids)]</field>
+        </record>
+
+    </data>
+</odoo>

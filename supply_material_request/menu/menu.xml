@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <menuitem id="parent_menu_internal_material_request" name="Supply Management"
+                  web_icon="supply_material_request,static/description/icon.png"/>
+
+        <menuitem id="menu_internal_material_request_act" parent="parent_menu_internal_material_request"
+                  name="Supply Request" action="supply_material_request.internal_material_request_form_action"
+                  sequence="1" groups="supply_material_request.group_internal_material_request_user"/>
+
+        <menuitem id="menu_internal_material_request_int" sequence="4" parent="parent_menu_internal_material_request"
+                  name="Internal Transfer" groups="supply_material_request.group_internal_material_request_user"/>
+
+        <!-- This Menu Item must have a parent and an action -->
+        <menuitem id="menu_internal_material_request_int_request" name="Request"
+                  parent="menu_internal_material_request_int"
+                  action="supply_material_request.action_supply_internal_transfer_request_initial" sequence="1"/>
+
+        <!-- This Menu Item must have a parent and an action -->
+        <menuitem id="menu_internal_material_request_int_issue" name="Issue" parent="menu_internal_material_request_int"
+                  action="supply_material_request.action_supply_internal_transfer_request_issue" sequence="2"/>
+
+        <menuitem id="draft_menu_supply_material_issue" name="New Request"
+                  parent="parent_menu_internal_material_request"
+                  action="supply_material_request.action_pending_supply_material_issue" sequence="30"
+                  groups="supply_material_request.group_internal_material_request_issue"/>
+
+        <menuitem id="partial_full_menu_supply_material_issue" name="Closed Requests"
+                  parent="parent_menu_internal_material_request"
+                  action="supply_material_request.action_partial_full_supply_material_issue" sequence="34"
+                  groups="supply_material_request.group_internal_material_request_issue"/>
+
+        <menuitem id="material_in_transit_stock" sequence="40" name="Material In Transit"
+                  parent="parent_menu_internal_material_request"
+                  action="supply_material_request.material_transfer_stock_move_action_maine_user_user"
+                  groups="supply_material_request.group_internal_material_request_user"/>
+
+        <menuitem id="material_in_transit_stock_issuer_menu" sequence="41" name="Material In Transit"
+                  parent="parent_menu_internal_material_request"
+                  action="supply_material_request.material_transfer_stock_move_action_issued_user"
+                  groups="supply_material_request.group_internal_material_request_issue"/>
+
+        <menuitem id="material_supply_inventory_report_line_view" sequence="48" name="Supply Lines"
+                  parent="parent_menu_internal_material_request"
+                  action="supply_material_request.action_view_material_request_line_view"
+                  groups="supply_material_request.group_internal_material_request_user"/>
+
+        <menuitem id="material_supply_inventory_report" sequence="50" name="Inventory Report"
+                  parent="parent_menu_internal_material_request"
+                  action="supply_material_request.material_transfer_stock_quant_actions"
+                  groups="supply_material_request.group_internal_material_request_user"/>
+
+        <menuitem id="menu_supply_stock_report"
+              name="Stock Report"
+              parent="supply_material_request.parent_menu_internal_material_request"
+              action="stock_movement_report_supply_req" sequence="51"/>
+
+        <menuitem id="main_menu_configuration" sequence="100" name="Configuration"
+                  parent="parent_menu_internal_material_request" groups="base.group_system"/>
+
+        <menuitem id="menu_supply_setting" sequence="1" parent="main_menu_configuration"
+                  action="supply_material_request.supply_management_setting_action"/>
+    </data>
+</odoo>

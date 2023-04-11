@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="form_inherit_supply_req_approval" model="ir.ui.view">
+            <field name="name">internal.material.request</field>
+            <field name="model">internal.material.request</field>
+            <field name="inherit_id" ref="supply_material_request.view_internal_material_request_form"/>
+            <field name="arch" type="xml">
+                <field name="requested_by" position="after">
+                    <field name="assigned_to" attrs="{'readonly': [('is_editable','=', False)]}" required="True"
+                           options="{'no_create': True, 'no_open': True}"/>
+                </field>
+                <button name="button_draft" position="after">
+                    <button name="button_to_approve" string="Request approval" type="object" class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"
+                            groups="supply_material_request.group_internal_material_request_user"/>
+
+                    <button name="button_approved" string="Approve" type="object"
+                            attrs="{'invisible': [('state', '!=', 'to_approve')]}"
+                            groups="supply_request_approval.group_internal_material_request_manager"
+                            class="oe_highlight" confirm="Are you sure to Approve.!!!"/>
+
+                    <button name="%(supply_request_approval.action_change_approver)d" string="Change Approver"
+                            type="action" groups="supply_material_request.group_internal_material_request_user"
+                            class="oe_highlight" attrs="{'invisible': [('state', 'not in', ('to_approve'))]}"/>
+                </button>
+                <xpath expr="//button[@name='create_material_request']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="material_request_inherit_supply_approval_tree_view" model="ir.ui.view">
+            <field name="name">internal.material.request.tree</field>
+            <field name="model">internal.material.request</field>
+            <field name="inherit_id" ref="supply_material_request.view_internal_material_request_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='requested_by']" position="after">
+                    <field name="assigned_to" readonly="1"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_supply_request_material_to_approve">
+            <field name="name">Material Requests To Approve</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">internal.material.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'create': False}</field>
+            <field name="domain">[('state', '=', 'to_approve'), ('assigned_to', '=', uid)]</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_supply_request_material_all_approved">
+            <field name="name">Material Requests Approved</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">internal.material.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'create': False, 'inv_bool': True}</field>
+            <field name="domain">[('assigned_to', '=', uid)]</field>
+        </record>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="material_issuance_form_view_approval_inherit" model="ir.ui.view">
+            <field name="name">Material Issue</field>
+            <field name="model">supply.material.issue</field>
+            <field name="inherit_id" ref="supply_material_request.supply_request_issue_form_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='request_by']" position="after">
+                    <field name="approved_by" readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="material_issuance_tree_view_approval_inherit" model="ir.ui.view">
+            <field name="name">Material Issue</field>
+            <field name="model">supply.material.issue</field>
+            <field name="inherit_id" ref="supply_material_request.material_issue_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='request_by']" position="after">
+                    <field name="approved_by" readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

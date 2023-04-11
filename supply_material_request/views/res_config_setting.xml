@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="internal_transfer_approval_setting" model="ir.ui.view">
+            <field name="name">internal.transfer.approval.setting</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('settings')]" position="inside">
+                    <div class="app_settings_block" data-string="Supply" string="Supply"
+                         data-key="supply_material_request">
+                        <h2>Supply Management</h2>
+                        <br/>
+
+                        <div class="row mt16 o_settings_container" name="operations_setting_container">
+                            <div class="col-12 col-lg-6 o_setting_box" id="product_packs_tracking">
+                                <div class="o_setting_left_pane">
+                                    <field name="module_supply_request_approval"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label for="module_supply_request_approval"/>
+                                    <div class="text-muted">
+                                        Supply Request Approval process
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane">
+                                    <field name="supply_transit_days"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label for="supply_transit_days"/>
+                                    <div class="text-muted">
+                                        Supply Request Transit Number of days
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="supply_transit_loc"/>
+                                    <div class="text-muted">
+                                        Supply Transit Location
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="mt16">
+                                            <field name="supply_transit_loc" domain="[
+                                            ('usage', '=', 'transit'), ('company_id', '=', company_id)]"
+                                                   options="{'no_create': True, 'no_open': True}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="supply_management_setting_action" model="ir.actions.act_window">
+            <field name="name">Settings</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module' : 'supply_material_request', 'bin_size': False}</field>
+        </record>
+
+    </data>
+</odoo>

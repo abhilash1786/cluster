@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="view_internal_material_request_form">
+            <field name="name">internal.material.request.form</field>
+            <field name="model">internal.material.request</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Internal Material Request">
+                    <header>
+                        <field name="approval_show" invisible="1"/>
+                        <field name="show_button" invisible="1"/>
+                        <field name="received_state" invisible="1"/>
+                        <field name="partial_received_state" invisible="1"/>
+                        <button name="button_draft" states="rejected" string="Reset" type="object"
+                                attrs="{'invisible': [('state', '!=', 'rejected')]}"
+                                invisible="context.get('inv_bool',False)"
+                                groups="supply_material_request.group_internal_material_request_user"/>
+
+                        <button name="create_material_request" attrs="{'invisible': [('show_button','=', False)]}"
+                                string="Request Material" type="object" class="oe_highlight"
+                                invisible="context.get('inv_bool',False)"
+                                groups="supply_material_request.group_internal_material_request_user"/>
+
+                        <button name="button_rejected" string="Reject" type="object" states="to_approve,approved"
+                                confirm="Are you sure you want to reject?" invisible="context.get('inv_bool',False)"/>
+
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,to_approve,approved,requested,received,rejected"
+                               statusbar_colors='{"approved":"blue"}'
+                               attrs="{'invisible': [('approval_show','!=', False)]}"/>
+
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,requested,received,rejected"
+                               statusbar_colors='{"approved":"blue"}'
+                               attrs="{'invisible': [('approval_show','=', False)]}"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Received" bg_color="bg-success"
+                                attrs="{'invisible': [('received_state', '=', False)]}"/>
+                        <widget name="web_ribbon" title="Partially Received" bg_color="bg-success"
+                                attrs="{'invisible': [('partial_received_state', '=', False)]}"/>
+                        <group>
+                            <field name="name" readonly="1"/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="requested_by"
+                                       readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group>
+                                <field name="description" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="company_id" groups="base.group_multi_company" widget="selection"
+                                       attrs="{'readonly': [('is_editable','=', False)]}" invisible="1"/>
+                                <field name="date_start"
+                                       readonly="True"/>
+                                <field name="is_editable" invisible="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="source_location_id" required="1" string="Source Location"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                <field name="dest_location_id" string="Destination Location"
+                                       required="1"
+                                       attrs="{'readonly': [('is_editable','=', False)]}"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group>
+                                <field name="material_approval_date" readonly="1"
+                                       attrs="{'invisible': [('material_approval_date', '=', False)]}"/>
+                                <field name="material_request_date" readonly="1"/>
+                                <field name="validate_date" invisible="1" readonly="1"/>
+                                <field name="supply_line_product_ids" widget="many2many_tags" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Products" name="supply_move">
+                                <button name="action_receive_qty" string="Receive Qty" type="object"
+                                        class="oe_highlight"
+                                        confirm="Are you sure you want to receive?"
+                                        attrs="{'invisible': [('state', 'not in', ('requested', 'partial_receive'))]}"
+                                        groups="supply_material_request.group_internal_material_request_user"
+                                        invisible="context.get('inv_bool',False)"/>
+                                <button name="action_receive_all_qty" string="Receive All Qty" type="object"
+                                        class="oe_highlight" confirm="Are you sure you want to receive all quantity ?"
+                                        attrs="{'invisible': [('state', 'not in', ('requested', 'partial_receive'))]}"
+                                        groups="supply_material_request.group_internal_material_request_user"
+                                        invisible="context.get('inv_bool',False)"/>
+                                <field name="line_ids" decoration-danger="partial_received_state==False"
+                                       context="{'default_source_location_id': source_location_id}">
+                                    <tree editable="bottom">
+                                        <field name="product_id" required="True"
+                                               domain="[('id', 'not in', parent.supply_line_product_ids), ('type', '=', 'product'), ('qty_available', '&gt;', 0.0), '|', ('company_id', '=', company_id), ('company_id', '=', False)]"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               attrs="{'readonly': [('is_editable','=', False)]}"
+                                               context="{'location': parent.source_location_id}"/>
+                                        <field name="name" required="True"
+                                               attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                        <field name="source_location_id" force_save="1" invisible="1"/>
+                                        <field name="onhand_qty" readonly="1" force_save="1"/>
+                                        <field name="product_qty" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                        <field name="product_uom_category_id" invisible="1"/>
+                                        <field name="product_uom_id" force_save="1"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               domain="[('category_id', '=', product_uom_category_id)]"
+                                               attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                        <field name="is_editable" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="total_received_qty" readonly="1"/>
+                                        <field name="total_transfer_qty" string="Total Issued Qty" readonly="1"/>
+                                        <field name="transfer_qty" string="Issued Not Received" readonly="1"/>
+                                        <field name="received_qty" string="Input Receive"
+                                               attrs="{'readonly': [('parent.state', 'not in', ('requested', 'partial_receive'))]}"
+                                               force_save="1"/>
+                                        <field name="company_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Material Requested" name="issue_line"
+                                  attrs="{'invisible': [('supply_issue_ids', '=', False)]}">
+                                <field name="supply_issue_ids" readonly="1"/>
+                            </page>
+                            <page string="Moves" name="supply_move"
+                                  attrs="{'invisible': [('supply_req_move_ids', '=', False)]}">
+                                <field name="supply_req_move_ids" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_internal_material_request_tree">
+            <field name="name">internal.material.request.tree</field>
+            <field name="model">internal.material.request</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <tree decoration-bf="message_needaction==True"
+                      decoration-info="state in ('draft','to_approve')"
+                      decoration-muted="state in ('rejected')"
+                      string="Internal Material Request">
+                    <field name="message_needaction" invisible="1"/>
+                    <field name="name"/>
+                    <field name="date_start"/>
+                    <field name="requested_by"/>
+                    <field name="warehouse_id"/>
+                    <field name="source_location_id"/>
+                    <field name="dest_location_id"/>
+                    <field name="company_id" groups="base.group_multi_company" widget="selection" invisible="1"/>
+                    <field name="origin"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="material_request_search_view" model="ir.ui.view">
+            <field name="name">Material Request Line</field>
+            <field name="model">internal.material.request</field>
+            <field name="arch" type="xml">
+                <search string="Material Request">
+                    <field name="name" string="Request"/>
+                    <separator/>
+                    <filter string="Today" name="today_filter"
+                            domain="[('date_start', '&gt;=', current_date), ('date_start', '&lt;=', current_date)]"
+                            context="{}"/>
+                    <filter string="Yesterday" name="yesterday_request"
+                            domain="[('date_start', '=', (context_today()-datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="Tomorrow" name="tomorrow_request"
+                            domain="[('date_start', '=', (context_today()+datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="Day After Tomorrow" name="day_after_tomorrow_request"
+                            domain="[('date_start', '=', (context_today()+datetime.timedelta(days=2)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="This Week" name="this_week"
+                            domain="[('date_start', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),('date_start', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                    <filter string="Last Week" name="last_week"
+                            domain="[('date_start', '&gt;=', (context_today()-datetime.timedelta(days=7)).strftime('%Y-%m-%d')),('date_start', '&lt;', (context_today()+datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="This Month" name="current_month"
+                            domain="[('date_start','&gt;=',context_today().strftime('%%Y-%%m-01')),('date_start','&lt;',(context_today()+relativedelta(months=1)).strftime('%%Y-%%m-01'))]"/>
+                    <filter string="Last Month" name="last_month"
+                            domain="[('date_start', '&lt;=', (context_today().replace(day=1)-datetime.timedelta(days=1)).strftime('%Y-%m-%d')),('date_start', '&gt;=', (context_today().replace(day=1)-datetime.timedelta(days=1)).replace(day=1).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <group expand="0" string="Group By..." colspan="11" col="11">
+                        <filter string="State" name="state_group_by" context="{'group_by':'state'}"/>
+                        <filter string="Date" name="date_group_by" context="{'group_by':'date_start'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="internal_material_request_form_action">
+            <field name="name">Supply Material Requests</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">internal.material.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="material_request_search_view"/>
+            <field name="context">{'delete': False, 'search_default_requested_by':uid}</field>
+            <field name="domain">[('is_internal_transfer', '=', False)]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_internal_material_request_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_internal_material_request_form')})]"/>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="action_supply_request_material_all_record">
+            <field name="name">All Material Requests</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">internal.material.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{"search_default_requested_by":uid, 'create': False, 'edit': False}</field>
+        </record>
+
+        <!--===========================Internal Material Request===============-->
+        <record model="ir.ui.view" id="view_supply_internal_transfer_request_form">
+            <field name="name">material.request.form</field>
+            <field name="model">internal.material.request</field>
+            <field name="priority">5</field>
+            <field name="arch" type="xml">
+                <form string="Internal Material Request">
+                    <header>
+                        <field name="is_internal_transfer" invisible="1"/>
+                        <field name="it_issue_validation" invisible="1"/>
+                        <field name="it_user_validation" invisible="1"/>
+                        <field name="it_receive_validation" invisible="1"/>
+                        <button name="material_internal_transfer_request" type="object" string="Request" states="draft"
+                                class="oe_highlight"
+                                groups="supply_material_request.group_internal_material_request_user"/>
+
+                        <button name="create_material_transfer" type="object" string="Issue Material"
+                                attrs="{'invisible': [('it_issue_validation', '=', True)]}" class="oe_highlight"
+                                groups="supply_material_request.group_internal_material_request_user"/>
+
+                        <button name="receive_issued_internal_transfer" type="object" string="Receive"
+                                attrs="{'invisible': [('it_receive_validation', '=', True)]}" class="oe_highlight"
+                                groups="supply_material_request.group_internal_material_request_user"/>
+
+                        <button name="button_internal_transfer_reject" type="object" string="Reject"
+                                states="draft,requested" class="oe_highlight"
+                                groups="supply_material_request.group_internal_material_request_user"/>
+
+                        <button name="button_draft" string="Reset" type="object"
+                                attrs="{'invisible': [('it_user_validation', '=', True)]}"
+                                invisible="context.get('inv_bool',False)"
+                                groups="supply_material_request.group_internal_material_request_user"/>
+
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,requested,received,rejected"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="approval_show" invisible="1"/>
+                            <field name="show_button" invisible="1"/>
+                            <field name="received_state" invisible="1"/>
+                            <field name="partial_received_state" invisible="1"/>
+                            <field name="is_internal_transfer" invisible="1"/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="requested_by" readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group>
+                                <field name="description" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="company_id" groups="base.group_multi_company" widget="selection"
+                                       attrs="{'readonly': [('is_editable','=', False)]}" invisible="1"/>
+                                <field name="date_start" readonly="1"/>
+                                <field name="is_editable" invisible="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="it_source_location_id" required="1" string="Source Location"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                <field name="dest_location_id" string="Destination Location"
+                                       required="1" attrs="{'readonly': [('state','!=', 'draft')]}"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group>
+                                <field name="material_request_date" readonly="1"/>
+                                <field name="validate_date" invisible="1" readonly="1"/>
+                                <field name="supply_line_product_ids" widget="many2many_tags" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Products">
+                                <field name="line_ids" context="{'default_source_location_id': it_source_location_id}">
+                                    <tree editable="bottom">
+                                        <field name="product_id" required="True"
+                                               domain="[('id', 'not in', parent.supply_line_product_ids),('type', '=', 'product'), ('qty_available', '&gt;', 0.0), '|', ('company_id', '=', company_id), ('company_id', '=', False)]"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               attrs="{'readonly': [('is_editable','=', False)]}"
+                                               context="{'location': parent.it_source_location_id}"/>
+                                        <field name="name" required="True"
+                                               attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                        <field name="source_location_id" force_save="1" invisible="1"/>
+                                        <field name="onhand_qty" readonly="1" force_save="1"/>
+                                        <field name="product_qty" attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                        <field name="product_uom_category_id" invisible="1"/>
+                                        <field name="product_uom_id" force_save="1"
+                                               options="{'no_create': True, 'no_open': True}"
+                                               domain="[('category_id', '=', product_uom_category_id)]"
+                                               attrs="{'readonly': [('is_editable','=', False)]}"/>
+                                        <field name="is_editable" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="internal_transfer_qty" readonly="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Moves" name="supply_move">
+                                <field name="supply_req_move_ids" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_material_request_tree_internal_transfer">
+            <field name="name">internal.material.request.tree</field>
+            <field name="model">internal.material.request</field>
+            <field name="priority">5</field>
+            <field name="arch" type="xml">
+                <tree decoration-bf="message_needaction==True"
+                      decoration-info="state in ('draft','to_approve')"
+                      decoration-muted="state in ('rejected')"
+                      string="Supply Request">
+                    <field name="message_needaction" invisible="1"/>
+                    <field name="name"/>
+                    <field name="date_start"/>
+                    <field name="requested_by"/>
+                    <field name="it_source_location_id" string="Source Location"/>
+                    <field name="dest_location_id" string="Destination Location"/>
+                    <field name="warehouse_id"/>
+                    <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_supply_internal_transfer_request_initial">
+            <field name="name">Internal Request</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">internal.material.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="material_request_search_view"/>
+            <field name="context">{'default_is_internal_transfer': True}</field>
+            <field name="domain">[('is_internal_transfer', '=', True), ('state', 'in', ('draft', 'issued', 'received', 'rejected'))]
+            </field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('view_material_request_tree_internal_transfer')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_supply_internal_transfer_request_form')})]"/>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_supply_internal_transfer_request_call">
+            <field name="name">Internal Request</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">internal.material.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="material_request_search_view"/>
+            <field name="context">{'default_is_internal_transfer': True}</field>
+            <field name="domain">[('is_internal_transfer', '=', True), ('state', '=', 'done')]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('view_material_request_tree_internal_transfer')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_supply_internal_transfer_request_form')})]"/>
+        </record>
+
+        <record id="action_supply_internal_transfer_request_issue" model="ir.actions.server">
+            <field name="name">Internal Request</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="supply_material_request.model_internal_material_request"/>
+            <field name="state">code</field>
+            <field name="code">action = model.get_material_request()</field>
+        </record>
+
+
+        <!--=============================Material Request Line===================================-->
+        <record id="material_request_line_tree_view" model="ir.ui.view">
+            <field name="name">Material Request Line</field>
+            <field name="model">internal.material.request.line</field>
+            <field name="arch" type="xml">
+                <tree string="Material Request Line">
+                    <field name="date_start" readonly="1"/>
+                    <field name="request_id" readonly="1"/>
+                    <field name="product_id" readonly="1"/>
+                    <field name="product_qty" readonly="1" sum="Total"/>
+                    <field name="total_received_qty" readonly="1" sum="Total"/>
+                    <field name="state" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="material_request_line_search_view" model="ir.ui.view">
+            <field name="name">Material Request Line</field>
+            <field name="model">internal.material.request.line</field>
+            <field name="arch" type="xml">
+                <search string="Material Request Line">
+                    <field name="request_id" string="Request"/>
+                    <field name="product_id" string="Product"/>
+                    <separator/>
+                    <filter string="Today" name="today_filter"
+                            domain="[('request_id.date_start', '&gt;=', current_date), ('request_id.date_start', '&lt;=', current_date)]"
+                            context="{}"/>
+                    <filter string="Yesterday" name="yesterday_appointment"
+                            domain="[('request_id.date_start', '=', (context_today()-datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="Tomorrow" name="tomorrow_appointment"
+                            domain="[('request_id.date_start', '=', (context_today()+datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="Day After Tomorrow" name="day_after_tomorrow_appointment"
+                            domain="[('request_id.date_start', '=', (context_today()+datetime.timedelta(days=2)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="This Week" name="creation_date_filter"
+                            domain="[
+                            ('request_id.date_start', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
+                            ('request_id.date_start', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))
+                            ]"/>
+                    <filter string="Last Week" name="start"
+                            domain="[
+                            ('request_id.date_start', '&gt;=', (context_today()-datetime.timedelta(days=7)).strftime('%Y-%m-%d')),
+                            ('request_id.date_start', '&lt;', (context_today()+datetime.timedelta(days=1)).strftime('%Y-%m-%d'))
+                            ]"/>
+                    <filter string="This Month" name="current_month"
+                            domain="[
+                            ('request_id.date_start','&gt;=',context_today().strftime('%%Y-%%m-01')),
+                            ('request_id.date_start','&lt;',(context_today()+relativedelta(months=1)).strftime('%%Y-%%m-01'))
+                            ]"/>
+                    <filter string="Last Month" name="start"
+                            domain="[
+                            ('request_id.date_start', '&lt;=', (context_today().replace(day=1)-datetime.timedelta(days=1)).strftime('%Y-%m-%d')),
+                            ('request_id.date_start', '&gt;=', (context_today().replace(day=1)-datetime.timedelta(days=1)).replace(day=1).strftime('%Y-%m-%d'))
+                            ]"/>
+                    <separator/>
+                    <group expand="0" string="Group By..." colspan="11" col="11">
+                        <filter string="Product" name="product_id_group_by" context="{'group_by':'product_id'}"/>
+                        <filter string="Supply" name="request_id_group_by" context="{'group_by':'request_id'}"/>
+                        <filter string="State" name="state_group_by" context="{'group_by':'state'}"/>
+                        <filter string="Date" name="date_group_by" context="{'group_by':'date_start'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_view_material_request_line_view" model="ir.actions.act_window">
+            <field name="name">Material Request Line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">internal.material.request.line</field>
+            <field name="search_view_id" ref="material_request_line_search_view"/>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('state', '=', 'received'), ('request_id.requested_by', '=', uid)]</field>
+        </record>
+
+    </data>
+</odoo>
