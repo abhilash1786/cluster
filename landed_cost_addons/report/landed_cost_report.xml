@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <template id="custom_landed_cost_header_footer_template">
+            <style>
+                .square1 {
+                height: 150px;
+                width: 200px;
+                text-align: left;
+                float:left;
+                }
+                .square2 {
+                height: 140px;
+                width: 350px;
+                background-color: transparent;
+                border: 1px transparent;
+                float:right;
+                }
+            </style>
+            <t t-if="not o" t-set="o" t-value="doc"/>
+
+            <t t-if="not company">
+                <!-- Multicompany -->
+                <t t-if="company_id">
+                    <t t-set="company" t-value="company_id"/>
+                </t>
+                <t t-elif="o and 'company_id' in o">
+                    <t t-set="company" t-value="o.company_id.sudo()"/>
+                </t>
+                <t t-else="else">
+                    <t t-set="company" t-value="res_company"/>
+                </t>
+            </t>
+            <div class="header">
+                <div class="row">
+                    <div class="square1" style="margin-left: 130px;">
+                        <br/>
+                        <img t-if="o.company_id.logo"
+                             t-att-src="image_data_uri(o.company_id.logo)"
+                             style="max-height: 140px; max-width: 280px;" alt="Logo"/>
+                    </div>
+                    <div class="square2">
+                        <br/>
+                        <p style="color:purple;margin:0px;text-align:center;">&#160;<strong>
+                            <span t-field="o.company_id.name"/>
+                        </strong>
+                        </p>
+                        <p style="margin:0px;text-align:center;">&#160;<span
+                                t-field="o.company_id.city"/>&#160;<span
+                                t-field="o.company_id.country_id.name"/>
+                        </p>
+                        <p style="margin:0px;text-align:center;">&#160;Phone No.:
+                            <span t-field="o.company_id.phone"/>
+                        </p>
+                        <p style="margin:0px;text-align:center;">&#160;Email:
+                            <span t-field="o.company_id.email"/>
+                        </p>
+                        <p style="margin:0px;text-align:center;">&#160;Web:
+                            <span t-field="o.company_id.website"/>
+                        </p>
+                    </div>
+                </div>
+                <br/>
+                <hr/>
+                <p style="font-size:18px;text-align:center;font-weight:bold;margin: 0px;color:purple">
+                    <strong>Landed Cost Report</strong>
+                </p>
+                <hr/>
+            </div>
+            <div class="article" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id"
+                 t-att-data-oe-lang="o and o.env.context.get('lang')">
+                <t t-raw="0"/>
+            </div>
+            <div t-attf-class="footer o_background_footer">
+                <div class="text-center">
+                    <table style="width: 50%;">
+                        <tbody>
+                            <tr>
+                                <td style="width: 10%;">Approved By:</td>
+                                <td style="width: 28%;">________________</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-right page_number">
+                    <div class="text-muted">
+                        Page:
+                        <span class="page"/>
+                        of
+                        <span class="topage"/>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template id="landed_cost_report_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="landed_cost_addons.custom_landed_cost_header_footer_template">
+                        <div class="page">
+
+                            <!--Style-->
+                            <table style="width: 50%; border: 2px solid;">
+                                <tbody>
+                                    <tr style="border-bottom: 2px solid;">
+                                        <td style="width: 50%; border-right: 2px solid;">&#160;
+                                            <strong>Purchase Order</strong>
+                                        </td>
+                                        <td style="width: 50%;">&#160;
+                                            <strong>Picking</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <t t-set="purchase_order" t-value=""/>
+                                        <t t-set="picking_name" t-value=""/>
+                                        <t t-foreach="o.po_ids" t-as="po">
+                                            <t t-if="purchase_order">
+                                                <t t-set="purchase_order"
+                                                   t-value="purchase_order+ ','+po.name"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-set="purchase_order" t-value="po.name"/>
+                                            </t>
+                                        </t>
+                                        <t t-foreach="o.picking_ids" t-as="picking">
+                                            <t t-if="picking_name">
+                                                <t t-set="picking_name" t-value="picking_name+ ','+picking.name"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-set="picking_name" t-value="picking.name"/>
+                                            </t>
+                                        </t>
+                                        <td style="width: 50%; border-right: 2px solid;">
+                                            <span t-esc="purchase_order"/>
+                                        </td>
+                                        <td style="width: 50%;">
+                                            <span t-esc="picking_name"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br/>
+                            <table style="width: 100%; border: 2px solid;">
+                                <tbody>
+                                    <tr style="border-bottom: 2px solid;">
+                                        <td style="border-right: 2px solid;">&#160;<strong>Product</strong></td>
+                                        <td style="border-right: 2px solid;">&#160;<strong>Quantity</strong></td>
+                                        <td style="border-right: 2px solid;">&#160;<strong>PO Value</strong></td>
+                                        <td style="border-right: 2px solid;">&#160;<strong>Landed Cost Value</strong></td>
+                                        <td style="border-right: 2px solid;">&#160;<strong>Total Value</strong></td>
+                                        <td>&#160;<strong>Average Value</strong></td>
+                                    </tr>
+                                    <tr t-foreach="o.transit_po_lines" t-as="transit" style="border-bottom: 2px solid;">
+                                        <td style="border-right: 2px solid;">&#160;
+                                            <span t-field="transit.product_id.name"/>
+                                        </td>
+                                        <td style="border-right: 2px solid; text-align: right;">
+                                            <span t-field="transit.product_qty"/>
+                                        </td>
+                                        <td style="border-right: 2px solid; text-align: right;">
+                                            <span t-field="transit.price_subtotal"/>
+                                        </td>
+                                        <td style="border-right: 2px solid; text-align: right;">
+                                            <span t-field="transit.landed_cost_value"/>
+                                        </td>
+                                        <td style="border-right: 2px solid; text-align: right;">
+                                            <span t-field="transit.total_value"/>
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <span t-field="transit.average_value"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="oe_structure"/>
+                        </div>
+
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

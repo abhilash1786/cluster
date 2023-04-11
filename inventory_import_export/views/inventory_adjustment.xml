@@ -1,0 +1,19 @@
+<odoo>
+    <!-- Inherit Form View to Modify it -->
+    <record id="inherit_inventory_adjustment_form_view" model="ir.ui.view">
+        <field name="name">Inventory Adjustment</field>
+        <field name="model">res.inventory.adjustment</field>
+        <field name="inherit_id" ref="hms_inventory_adjustments.res_inventory_adjustment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form//header" position="inside">
+                <button name="print_export_template" string="Print Template"
+                            type="object" class="oe_highlight"/>
+                <button name="import_excel_template" string="Import Template"
+                            type="object" class="oe_highlight" attrs="{'invisible': [('state', '=', 'confirm')]}"/>
+            </xpath>
+            <field name="location_id" position="after">
+                <field name="import_file"/>
+            </field>
+        </field>
+    </record>
+</odoo>

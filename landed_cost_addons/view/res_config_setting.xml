@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="account_landed_cost_configuration" model="ir.ui.view">
+            <field name="name">res.config.settings.view.inherit.landed.cost</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="40"/>
+            <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='has_accounting_entries']" position="after">
+                    <h2>Landed Cost Settings</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Holding Account</span>
+                                <div class="text-muted">
+                                    Holding Account
+                                </div>
+                                <div class="content-group">
+                                    <div class="row mt16">
+                                        <label for="holding_account_id" class="col-lg-3 o_light_label"/>
+                                        <field name="holding_account_id"
+                                               options="{'no_create_edit': True, 'no_open': True}"
+                                               context="{'active_test': False}"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="o_setting_right_pane">
+<!--                                <span class="o_form_label">Allow Landed Cost Approval Email</span>-->
+                                <div class="content-group">
+                                    <div class="row mt16">
+                                        <label for="is_allow_email" class="col-lg-3 o_light_label"/>
+                                        <field name="is_allow_email"
+                                               />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Default Journal</span>
+                                <div class="text-muted">
+                                    Default Journal
+                                </div>
+                                <div class="content-group">
+                                    <div class="row mt16">
+                                        <label for="lc_journal_id"
+                                               class="col-lg-3 o_light_label"/>
+                                        <field name="lc_journal_id"
+                                               options="{'no_create_edit': True, 'no_open': True}"
+                                               context="{'active_test': False}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="nuro_landed_cost_approval_wizard" model="ir.ui.view">
+            <field name="name">Landed Cost Approval</field>
+            <field name="model">landed.cost.approve.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Landed Cost">
+                    <group>
+                        <group>
+                            <field name="stock_landed_cost_id" invisible="1"/>
+                            <field name="approve_by_id" required="1"
+                                   options="{'no_option': True, 'no_create': True}"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Request" type="object" name="approve_landed_cost" class="oe_highlight"/>
+                        <button string="Close" class="btn-default oe_highlight" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_nuro_landed_cost_approval_wizard" model="ir.actions.act_window">
+            <field name="name">Landed Cost Approval</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">landed.cost.approve.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

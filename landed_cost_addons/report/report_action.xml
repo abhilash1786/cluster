@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!--Papaer format for sample label-->
+        <record id="paperformat_landed_cost_report_format" model="report.paperformat">
+            <field name="name">Landed Cost Report</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">80</field>
+            <field name="margin_bottom">30</field>
+            <field name="margin_left">6</field>
+            <field name="margin_right">6</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">80</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <!--        Blood Transfusion Cash receipt action-->
+        <report id="action_nuro_landed_cost_report_action"
+                string="Landed Cost Report"
+                model="stock.landed.cost"
+                report_type="qweb-pdf"
+                name="nuro_landed_cost_addons.landed_cost_report_template"
+                file="nuro_landed_cost_addons.landed_cost_report_template"
+                paperformat="paperformat_landed_cost_report_format"/>
+    </data>
+</odoo>

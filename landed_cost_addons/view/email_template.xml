@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="landed_cost_approval_email" model="mail.template">
+            <field name="name">Landed Cost Approval</field>
+            <field name="subject">Landed Cost</field>
+            <field name="email_to">${object.approve_by_id.email}</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="stock_landed_costs.model_stock_landed_cost"/>
+           <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: #FFF; ">
+
+<br/>
+        <p>Hi ${object.approve_by_id.name}</p>
+        <br/>
+        <p>You have new landed cost request for approval </p>
+        <p>reference no. ${object.name}</p>
+
+        <p>Please follow the below link.</p>
+                </br>
+                <p>
+                <a href="landed_url" style="background-color: #9E588B; margin-top: 5px; padding: 10px;
+                text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;">Click Here</a>
+                </p>
+                </br>
+
+            <p style="color:#9E588B;">Powered by <a target="_blank" href="https://www.odoo.com">Odoo</a>.</p>
+   <br/>
+
+  Thanks & Regards, <br/>
+
+  <p></p>
+
+<br/>
+
+</p>
+
+</div>
+            ]]></field>
+        </record>
+</odoo>

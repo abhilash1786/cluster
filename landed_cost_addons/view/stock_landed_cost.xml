@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!-- Inherit Form View to Modify it -->
+        <record id="landed_cost_from_view_inherit" model="ir.ui.view">
+            <field name="name">Landed Cost</field>
+            <field name="model">stock.landed.cost</field>
+            <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="replace">
+                    <header>
+                        <button type="action" name="%(landed_cost_addons.action_nuro_landed_cost_approval_wizard)d"
+                                string="Send For Approval" states="draft" class="oe_highlight"/>
+                        <field name="approve_person" invisible="1"/>
+                        <button type="object" name="approve_landed_cost" string="Approve"
+                                states="waiting_approval" class="oe_highlight"
+                                groups="landed_cost_addons.group_landed_cost_approval"/>
+                        <button type="object" name="confirm_landed_cost" string="Confirm"
+                                confirm="Are you sure to post this entry" class="oe_highlight"
+                                states="approved"/>
+                        <button type="object" name="button_validate" string="Validate" class="oe_highlight"
+                                states="transit"/>
+                        <button name="button_cancel" string="Cancel" states="draft,waiting_approval,approved,transit"
+                                type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,transit"/>
+                    </header>
+                </xpath>
+                <field name="picking_ids" position="before">
+                    <field name="po_picking_ids" widget="many2many_tags" readonly="1" invisible="1" force_save="1"/>
+                    <field name="po_ids" widget="many2many_tags" options="{'no_create': True, 'no_open': True}"
+                           attrs="{'required': [('state', '=', 'transit')],'readonly': [('state', '=', 'done')]}"
+                           domain="[('state', 'in', ('purchase', 'done')), ('company_id', '=', company_id)]"/>
+                </field>
+                <xpath expr="//field[@name='account_journal_id']" position="attributes">
+                    <attribute name="options">{"no_open": True, "no_create": True}</attribute>
+                </xpath>
+                <field name="account_move_id" position="before">
+                    <field name="holding_account_move_id" readonly="1"/>
+                </field>
+                <field name="picking_ids" position="attributes">
+                    <attribute name="attrs">{'readonly': [('state', '=', 'done')], 'invisible': [('po_ids', '=',
+                        False)]}
+                    </attribute>
+                    <attribute name="domain">[('state', '=', 'done'),('purchase_id', 'in', po_ids)]</attribute>
+                </field>
+
+                <xpath expr="//field[@name='cost_lines']//tree//field[@name='account_id']" position="before">
+                    <field name="payment_by" required="1"/>
+                    <field name="journal_id"
+                           attrs="{'required': [('payment_by', '=','cash')], 'invisible': [('payment_by', '=', 'credit')]}"
+                           domain="[('type', 'in', ('bank', 'cash'))]"/>
+                </xpath>
+                <xpath expr="//field[@name='cost_lines']//tree//field[@name='account_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//notebook" position="before">
+                    <button type="object" name="compute_cost_lines_po" string="Compute PO Line" colspan="2"
+                            attrs="{'invisible': [('state', 'not in', ('draft', 'transit', 'waiting_approval'))]}"
+                            class="oe_stat_button" icon="fa-clock-o"/>
+                </xpath>
+                <xpath expr="//notebook" position="inside">
+                    <page name="po_picking_valuation_lines" string="PO Lines"
+                          attrs="{'invisible': [('po_ids', '=', False)]}">
+                        <field name="transit_po_lines" force_save="1" readonly="1">
+                            <tree create="false" edit="false">
+                                <field name="product_id"/>
+                                <field name="product_qty"/>
+                                <field name="price_subtotal" sum="Total Subtotal"/>
+                                <field name="landed_cost_value" sum="Total Landed Cost"/>
+                                <field name="total_value" sum="Total Value"/>
+                                <field name="average_value" sum="Average Value"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="landed_cost_tree_view" model="ir.ui.view">
+            <field name="name">Landed Cost Tree</field>
+            <field name="model">stock.landed.cost</field>
+            <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_tree"/>
+            <field name="arch" type="xml">
+                <field name="date" position="after">
+                    <field name="amount_total"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
